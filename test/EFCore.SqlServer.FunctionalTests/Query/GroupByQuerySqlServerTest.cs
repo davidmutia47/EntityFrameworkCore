@@ -1759,6 +1759,29 @@ FROM [Orders] AS [o0]
 ORDER BY [o0].[OrderID], [o0].[OrderDate]");
         }
 
+        public override void Count_after_GroupBy()
+        {
+            base.Count_after_GroupBy();
+
+            AssertSql(
+                @"SELECT COUNT(*)
+FROM (
+    SELECT SUM([o].[OrderID]) AS [c]
+    FROM [Orders] AS [o]
+    GROUP BY [o].[CustomerID]
+) AS [t]");
+        }
+
+        public override void LongCount_after_client_GroupBy()
+        {
+            base.LongCount_after_client_GroupBy();
+
+            AssertSql(
+                @"SELECT [o].[OrderID], [o].[CustomerID], [o].[EmployeeID], [o].[OrderDate]
+FROM [Orders] AS [o]
+ORDER BY [o].[CustomerID]");
+        }
+
         private void AssertSql(params string[] expected)
             => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 
